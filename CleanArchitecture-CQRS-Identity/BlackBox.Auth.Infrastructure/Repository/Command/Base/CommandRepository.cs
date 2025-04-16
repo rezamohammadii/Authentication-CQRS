@@ -1,33 +1,43 @@
 ﻿using BlackBox.Auth.Domain.Repository.Command.Base;
+using BlackBox.Auth.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlackBox.Auth.Infrastructure.Repository.Command.Base
 {
     public class CommandRepository<T> : ICommandRepository<T> where T : class
     {
-
-        public CommandRepository()
+        protected readonly ApplicationDbContext _dbContext;
+        public CommandRepository(ApplicationDbContext dbContext)
         {
-            
-        }
-        public Task<T> AddAsync(T entity)
-        {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
         }
 
-        public Task DeleteAsync(T entity)
+        // Insert to database
+        public async Task<T> AddAsync(T entity)
         {
-            throw new NotImplementedException();
+            await _dbContext.Set<T>().AddAsync(entity);
+            await _dbContext.SaveChangesAsync();
+            return entity;
         }
 
-        public Task UpdateAsync(T entity)
+        // Delete from datbase
+        public async Task DeleteAsync(T entity)
         {
-            throw new NotImplementedException();
+            _dbContext.Entry(entity).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+        }
+
+        // Update to database
+        public async Task UpdateAsync(T entity)
+        {
+            _dbContext.Set<T>().Remove(entity);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }
