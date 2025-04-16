@@ -10,6 +10,7 @@ namespace BlackBox.Auth.Infrastructure.Repository.Command.Base
 {
     public class CommandRepository<T> : ICommandRepository<T> where T : class
     {
+
         public CommandRepository()
         {
             
