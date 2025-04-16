@@ -1,9 +1,19 @@
+using BlackBox.Auth.Application;
+using BlackBox.Auth.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+
+//Include Application Dependency
+builder.Services.AddApplicationServices();
+
+// Include Infrastructure Dependency
+builder.Services.AddInfrastructureServices(builder.Configuration);
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

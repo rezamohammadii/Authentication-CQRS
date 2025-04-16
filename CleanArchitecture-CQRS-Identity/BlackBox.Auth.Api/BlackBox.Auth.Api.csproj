@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BlackBox.Auth.Application\BlackBox.Auth.Application.csproj" />
+    <ProjectReference Include="..\BlackBox.Auth.Infrastructure\BlackBox.Auth.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
