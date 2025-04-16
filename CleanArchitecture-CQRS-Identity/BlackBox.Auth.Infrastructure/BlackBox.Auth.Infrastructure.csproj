@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.15" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BlackBox.Auth.Application\BlackBox.Auth.Application.csproj" />
     <ProjectReference Include="..\BlackBox.Auth.Domain\BlackBox.Auth.Domain.csproj" />
   </ItemGroup>
 
