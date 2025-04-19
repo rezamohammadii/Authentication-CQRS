@@ -15,6 +15,7 @@ namespace BlackBox.Auth.Application.Common.Interface
         ValueTask<List<(string id, string fullName, string userName, string email)>> GetAllUsersAsync(CancellationToken cancellationToken);
         ValueTask<bool> DeleteUserAsync(string userId);
         ValueTask<(string userId, string fullName, string UserName, string email, IList<string> roles)> GetUserDetailsAsync(string userId);
+        ValueTask<(string userId, string fullName, string UserName, string email, IList<string> roles)> GetUserDetailsByUserNameAsync(string userName);
 
         #endregion
 
