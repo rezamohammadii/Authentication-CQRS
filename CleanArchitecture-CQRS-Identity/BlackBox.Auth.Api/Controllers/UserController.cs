@@ -19,5 +19,12 @@ namespace BlackBox.Auth.Api.Controllers
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<IActionResult> CreateUser(CreateUserCommand userCommand)
             => Ok(await _mediator.Send(userCommand));
+
+        [HttpGet("GetAll")]
+        [ProducesDefaultResponseType(typeof(int))]
+        public async Task<IActionResult> GetAllUserAsync()
+        {
+            return Ok(await _mediator.Send(new Application.Queries.User.GetUserQuery()));
+        }
     }
 }
