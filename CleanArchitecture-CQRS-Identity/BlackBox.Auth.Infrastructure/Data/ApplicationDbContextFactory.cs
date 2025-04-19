@@ -12,8 +12,9 @@ namespace BlackBox.Auth.Infrastructure.Data
     {
         public ApplicationDbContext CreateDbContext(string[] args)
         {
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), @"..\BlackBox.Auth.Api");
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(basePath)
                 .AddJsonFile("appsettings.json") 
                 .Build();
 
