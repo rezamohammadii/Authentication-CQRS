@@ -49,6 +49,8 @@ namespace BlackBox.Auth.Infrastructure.Services
             return (result.Succeeded, user.Id);
         }
 
+       
+
         public async ValueTask<List<(string id, string fullName, string userName, string email)>> GetAllUsersAsync(CancellationToken cancellationToken)
         {
             var users = await _userManager.Users.Select(x => new
@@ -60,7 +62,32 @@ namespace BlackBox.Auth.Infrastructure.Services
             }).ToListAsync(cancellationToken);
         }
 
+        public async ValueTask<bool> DeleteUserAsync(string userId)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            if (user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
 
+            if (user.UserName == "system" || user.UserName == "admin")
+            {
+                throw new Exception("You can not delete system or admin user");
+
+            }
+            var result = await _userManager.DeleteAsync(user);
+            return result.Succeeded;
+        }
+        public async ValueTask<(string userId, string fullName, string UserName, string email, IList<string> roles)> GetUserDetailsAsync(string userId)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            if (user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
+            var roles = await _userManager.GetRolesAsync(user);
+            return (user.Id, user.FullName, user.UserName, user.Email, roles);
+        }
         #endregion
 
         #region User's Role Section
@@ -75,6 +102,8 @@ namespace BlackBox.Auth.Infrastructure.Services
             var roles = await _userManager.GetRolesAsync(user);
             return roles.ToList();
         }
+
+      
         #endregion
 
     }

@@ -13,6 +13,9 @@ namespace BlackBox.Auth.Application.Common.Interface
         ValueTask<(bool isSucceed, string userId)> CreateUserAsync(string username, string password, string email,
             string fullName, List<string> roles);
         ValueTask<List<(string id, string fullName, string userName, string email)>> GetAllUsersAsync(CancellationToken cancellationToken);
+        ValueTask<bool> DeleteUserAsync(string userId);
+        ValueTask<(string userId, string fullName, string UserName, string email, IList<string> roles)> GetUserDetailsAsync(string userId);
+
         #endregion
 
         #region User's Role Section
