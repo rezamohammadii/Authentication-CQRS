@@ -60,6 +60,7 @@ namespace BlackBox.Auth.Infrastructure.Services
                 x.Email,
                 x.FullName,
             }).ToListAsync(cancellationToken);
+            return users.Select(user => (user.Id, user.FullName, user.UserName, user.Email)).ToList();
         }
 
         public async ValueTask<bool> DeleteUserAsync(string userId)
@@ -98,6 +99,14 @@ namespace BlackBox.Auth.Infrastructure.Services
             var roles = await _userManager.GetRolesAsync(user);
             return (user.Id, user.FullName, user.UserName, user.Email, roles);
         }
+        public async ValueTask<bool> UpdateUserProfile(string id, string fullName, string email, IList<string> roles)
+        {
+            var  user = await _userManager.FindByIdAsync(id);
+            user.FullName = fullName;
+            user.Email = email;
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
+        }
         #endregion
 
         #region User's Role Section
@@ -113,7 +122,30 @@ namespace BlackBox.Auth.Infrastructure.Services
             return roles.ToList();
         }
 
-      
+        public async ValueTask<bool> AssignUserToRole(string userName, IList<string> roles)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName);
+            if (user is null)
+            {
+                throw new NotFoundException("User not found");
+
+            }
+            var result = await _userManager.AddToRolesAsync(user, roles);
+            return result.Succeeded;
+        }
+
+        public async ValueTask<bool> UpdateUsersRole(string userName, IList<string> usersRole)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            var existingRoles = await _userManager.GetRolesAsync(user);
+            var result = await _userManager.RemoveFromRolesAsync(user, existingRoles);
+            result = await _userManager.AddToRolesAsync(user, usersRole);
+            return result.Succeeded;
+        }
+
+       
+
+
         #endregion
 
     }

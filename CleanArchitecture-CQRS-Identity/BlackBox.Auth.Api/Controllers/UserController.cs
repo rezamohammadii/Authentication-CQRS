@@ -1,5 +1,6 @@
 ﻿using BlackBox.Auth.Application.Commands.User.Create;
 using BlackBox.Auth.Application.Commands.User.Delete;
+using BlackBox.Auth.Application.Commands.User.Update;
 using BlackBox.Auth.Application.DTOs;
 using BlackBox.Auth.Application.Queries.User;
 using MediatR;
@@ -60,6 +61,38 @@ namespace BlackBox.Auth.Api.Controllers
         {
             var result = await _mediator.Send(command);
             return Ok(result);
+        }
+
+        [HttpPut("EditUserRoles")]
+        [ProducesDefaultResponseType(typeof(int))]
+        public async Task<IActionResult> EditUserRoles(UpdateUserRolesCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpGet("GetAllUserDetails")]
+        [ProducesDefaultResponseType(typeof(UserDetailsResponseDTO))]
+        public async Task<IActionResult> GetAllUserDetails()
+        {
+            var result = await _mediator.Send(new GetAllUsersDetailsQuery());
+            return Ok(result);
+        }
+
+        [HttpPut("EditUserProfile/{id}")]
+        [ProducesDefaultResponseType(typeof(int))]
+        public async Task<IActionResult> EditUserProfile(string id, [FromBody] EditUserProfileCommand command)
+        {
+            if (id == command.Id)
+            {
+                var result = await _mediator.Send(command);
+                return Ok(result);
+
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
     }
