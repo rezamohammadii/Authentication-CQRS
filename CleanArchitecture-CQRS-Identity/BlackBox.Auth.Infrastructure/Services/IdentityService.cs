@@ -47,6 +47,8 @@ namespace BlackBox.Auth.Infrastructure.Services
                 throw new ValidationException(addUserRole.Errors);
             }
             return (result.Succeeded, user.Id);
+
+
         }
 
        
@@ -107,6 +109,23 @@ namespace BlackBox.Auth.Infrastructure.Services
             var result = await _userManager.UpdateAsync(user);
             return result.Succeeded;
         }
+
+        public async ValueTask<bool> SigninUserAsync(string userName, string password)
+        {
+            var result = await _signInManager.PasswordSignInAsync(userName, password, true, false);
+            return result.Succeeded;
+        }
+        public async ValueTask<string> GetUserIdAsync(string userName)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName);
+            if (user == null)
+            {
+                throw new NotFoundException("User not found");
+                //throw new Exception("User not found");
+            }
+            return await _userManager.GetUserIdAsync(user);
+        }
+
         #endregion
 
         #region User's Role Section
@@ -143,9 +162,72 @@ namespace BlackBox.Auth.Infrastructure.Services
             return result.Succeeded;
         }
 
-       
 
 
+        #endregion
+
+        #region Role Section
+        public async ValueTask<bool> CreateRoleAsync(string roleName)
+        {
+            var result = await _roleManager.CreateAsync(new IdentityRole(roleName));
+            if (!result.Succeeded)
+            {
+                throw new ValidationException(result.Errors);
+            }
+            return result.Succeeded;
+        }
+
+        public async ValueTask<List<(string id, string roleName)>> GetRolesAsync()
+        {
+            var roles = await _roleManager.Roles.Select(x => new
+            {
+                x.Id,
+                x.Name,
+            }).ToListAsync();
+            return roles.Select(role => (role.Id, role.Name)).ToList();
+        }
+
+        public async Task<bool> DeleteRoleAsync(string roleId)
+        {
+            var roleDetails = await _roleManager.FindByIdAsync(roleId);
+            if (roleDetails is null)
+            {
+                throw new NotFoundException("Role not found");
+            }
+            if (roleDetails.Name == "Administrator")
+            {
+                throw new BadRequestException("You can not delete Administrator Role");
+
+            }
+            var result = await _roleManager.DeleteAsync(roleDetails);
+            if (!result.Succeeded)
+            {
+                throw new ValidationException(result.Errors);
+            }
+            return result.Succeeded;
+
+
+        }
+
+        public async ValueTask<(string id, string roleName)> GetRoleByIdAsync(string id)
+        {
+            var role = await _roleManager.FindByIdAsync(id);
+            return (role.Id, role.Name);
+        }
+
+        public async ValueTask<bool> UpdateRole(string id, string roleName)
+        {
+            if (roleName != null)
+            {
+                var role = await _roleManager.FindByIdAsync(id);
+                role.Name = roleName;
+                var result = await _roleManager.UpdateAsync(role);
+               return result.Succeeded;
+            }
+            return false;
+        }
+
+      
         #endregion
 
     }

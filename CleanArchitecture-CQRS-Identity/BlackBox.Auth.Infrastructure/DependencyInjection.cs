@@ -1,8 +1,10 @@
 ﻿using BlackBox.Auth.Application.Common.Interface;
 using BlackBox.Auth.Domain.Repository.Command.Base;
+using BlackBox.Auth.Domain.Repository.Query.Base;
 using BlackBox.Auth.Infrastructure.Data;
 using BlackBox.Auth.Infrastructure.Identity;
 using BlackBox.Auth.Infrastructure.Repository.Command.Base;
+using BlackBox.Auth.Infrastructure.Repository.Query.Base;
 using BlackBox.Auth.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -49,6 +51,8 @@ namespace BlackBox.Auth.Infrastructure
             });
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped(typeof(ICommandRepository<>), typeof(CommandRepository<>));
+            services.AddScoped(typeof(IQueryRepository<>), typeof(QueryRepository<>));
+
             return services;
         }
     }
